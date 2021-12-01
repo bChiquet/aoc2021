@@ -1,4 +1,4 @@
-pub fn p1_1_imperative(vec: Vec<usize>) -> usize {
+pub fn _p1_1_imperative(vec: Vec<usize>) -> usize {
     let mut acc = 0;
     for i in 1..vec.len() {
         if vec[i] > vec[i-1] { acc +=1; }
@@ -16,6 +16,14 @@ pub fn p1_1(vec: Vec<usize>) -> usize {
        });
    sum
 }
+pub fn _p1_1_zip(vec: Vec<usize>) -> usize {
+    let prevs = vec[0..vec.len()-1].iter();
+    let nexts = vec[1..vec.len()  ].iter();
+
+    prevs.zip(nexts)
+        .map(|(prev, next)| if prev < next {1} else {0})
+        .sum()
+}
 
 pub fn _p1_2_imperative(vec: Vec<usize>) -> usize {
     let mut acc = 0;
@@ -32,7 +40,7 @@ pub fn _p1_2_imperative(vec: Vec<usize>) -> usize {
 pub fn p1_2(vec: Vec<usize>) -> usize {
     let digits_1 = vec[0..vec.len()-2].iter();
     let digits_2 = vec[1..vec.len()-1].iter();
-    let digits_3 = vec[2..vec.len()].iter();
+    let digits_3 = vec[2..vec.len()  ].iter();
 
     let windows = digits_1.zip(digits_2).zip(digits_3)
         .map(|((d_1, d_2), d_3)| d_1 + d_2 + d_3);
