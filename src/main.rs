@@ -30,4 +30,22 @@ mod tests {
             .map(solve::p1_2);
         assert_eq!(depth_increases, Ok(5))
     }
+
+    #[test]
+    fn day2_ex1() {
+        let final_pos_x_depth = fs::read_to_string("examples/2-1")
+            .map_err(to_module_error)
+            .and_then(parse::p2_1)
+            .map(solve::p2_1);
+        assert_eq!(final_pos_x_depth, Ok(15*10))
+    }
+
+    #[test]
+    fn day2_ex2() {
+        let final_pos_x_depth = fs::read_to_string("examples/2-1")
+            .map_err(to_module_error)
+            .and_then(parse::p2_1)
+            .map(solve::p2_2);
+        assert_eq!(final_pos_x_depth, Ok(15*60))
+    }
 }

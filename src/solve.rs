@@ -47,3 +47,33 @@ pub fn p1_2(vec: Vec<usize>) -> usize {
 
     p1_1(windows.collect())
 }
+
+//--------------------------day2---------------------------
+use crate::parse::Command;
+
+pub fn p2_1(vec: Vec<Command>) -> usize {
+    let (forward, down) = vec.iter()
+        .fold(
+            (0,0),
+            |(forward, down), order| match order {
+                Command::Forward(distance) => (forward + distance, down),
+                Command::Down(distance)    => (forward, down + distance),
+                Command::Up(distance)      => (forward, down - distance)
+            });
+    forward * down
+}
+
+pub fn p2_2(vec: Vec<Command>) -> usize {
+    let (forward, down, _) = vec.iter()
+        .fold(
+            (0,0,0),
+            |(forward, down, aim), order| match order {
+                Command::Forward(distance) =>
+                    (forward + distance, down + (aim * distance), aim),
+                Command::Down(angle) =>
+                    (forward, down, aim + angle),
+                Command::Up(angle) =>
+                    (forward, down, aim - angle)
+            });
+    forward * down
+}
