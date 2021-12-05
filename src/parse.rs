@@ -1,6 +1,33 @@
 extern crate nom;
 
-use nom::*;
+use nom::{
+    multi::{
+        separated_list0,
+        separated_list1,
+        many0,
+        many1
+    },
+    bytes::complete::{
+        tag
+    },
+    character::complete::{
+        line_ending,
+        char,
+        digit1
+    },
+    combinator::{
+        map_res,
+        map
+    },
+    sequence::{
+        pair,
+        preceded
+    },
+    branch::{
+        alt
+    },
+    *
+};
 use std::vec::Vec;
 use crate::error::Error;
 use std::str;
@@ -13,10 +40,10 @@ fn check_end<A> (input: (&str, Vec<A>)) -> Result<Vec<A>, Error> {
 }
 
 pub fn p1_1(input: String) -> Result<Vec<usize>, Error> {
-        multi::separated_list0(
-            character::complete::line_ending,
-            combinator::map_res(
-                character::complete::digit1::<&str, error::VerboseError<&str>>,
+        separated_list0(
+            line_ending,
+            map_res(
+                digit1::<&str, error::VerboseError<&str>>,
                 str::parse)
             )(input.as_str())
     .map_err(|_| Error::ParseError(""))
@@ -31,16 +58,16 @@ pub enum Command {
 }
 
 pub fn p2_1(input: String) -> Result<Vec<Command>, Error> {
-    multi::separated_list0(
-        character::complete::line_ending,
-        combinator::map(
+    separated_list0(
+        line_ending,
+        map(
             sequence::pair(
                 branch::alt((
-                    bytes::complete::tag("forward "),
-                    bytes::complete::tag("up "),
-                    bytes::complete::tag("down "))), 
-                combinator::map_res(
-                    character::complete::digit1::<&str, error::VerboseError<&str>>,
+                    tag("forward "),
+                    tag("up "),
+                    tag("down "))), 
+                map_res(
+                    digit1::<&str, error::VerboseError<&str>>,
                     str::parse
                 )
             ),
@@ -63,13 +90,13 @@ fn check_length<A>(input: Vec<Vec<A>>) -> Result<Vec<Vec<A>>, Error> {
 }
 
 pub fn p3_1(input: String) -> Result<Vec<Vec<usize>>, Error> {
-    multi::separated_list1(
-        character::complete::line_ending,
-        multi::many1(
-            combinator::map(
-                branch::alt(
-                    (character::complete::char::<&str, error::VerboseError<&str>>('0'),
-                    character::complete::char::<&str, error::VerboseError<&str>>('1'))
+    separated_list1(
+        line_ending,
+        many1(
+            map(
+                alt(
+                    (char::<&str, error::VerboseError<&str>>('0'),
+                     char::<&str, error::VerboseError<&str>>('1'))
                 ),
                 |input| if input == '1' {1} else {0}
             )
