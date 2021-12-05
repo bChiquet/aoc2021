@@ -107,3 +107,66 @@ pub fn p3_1(input: Vec<Vec<usize>>) -> usize {
     gamma * epsilon
 }
 
+struct Count {
+    ones: usize,
+    zeros: usize,
+}
+fn count(input: Vec<Vec<usize>>, bit: usize) -> Count {
+    input.iter()
+        .map(|vec| vec[bit])
+        .fold(Count {ones:0, zeros:0}, |count, i|
+            if i == 1 {
+                Count {ones: count.ones+1, .. count}
+            } else {
+                Count {zeros: count.zeros+1, .. count}
+            })
+}
+
+fn mk_usize(vec: Vec<usize>) -> usize {
+    let mut int: usize=0;
+    for bit in vec {
+        int = int << 1;
+        if bit == 1 { int +=1; }
+    }
+    int
+}
+
+pub fn p3_2(input: Vec<Vec<usize>>) -> usize {
+    let mut filtered_input = input.clone();
+    for i in 0..input[0].len() {
+        if filtered_input.len() > 1 {
+            let Count {ones, zeros} = count(filtered_input.clone(), i);
+            if ones >= zeros {
+                filtered_input = filtered_input.iter().cloned()
+                    .filter(|vec| vec[i]==1)
+                    .collect();
+            } else {
+                filtered_input = filtered_input.iter().cloned()
+                    .filter(|vec| vec[i]==0)
+                    .collect();
+            }
+        }
+    }
+    assert!(filtered_input.len() == 1);
+    let oxygen = mk_usize(filtered_input[0].clone());
+
+    filtered_input = input.clone();
+    for i in 0..input[0].len() {
+        if filtered_input.len() > 1 {
+            let Count {ones, zeros} = count(filtered_input.clone(), i);
+            if ones < zeros {
+                filtered_input = filtered_input.iter().cloned()
+                    .filter(|vec| vec[i]==1)
+                    .collect();
+            } else {
+                filtered_input = filtered_input.iter().cloned()
+                    .filter(|vec| vec[i]==0)
+                    .collect();
+            }
+        }
+    }
+    assert!(filtered_input.len() == 1);
+    let co2 = mk_usize(filtered_input[0].clone());
+
+    oxygen * co2
+}
