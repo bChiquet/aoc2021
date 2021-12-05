@@ -5,7 +5,8 @@ use nom::{
         separated_list0,
         separated_list1,
         many0,
-        many1
+        many1,
+        count
     },
     bytes::complete::{
         tag
@@ -32,9 +33,9 @@ use std::vec::Vec;
 use crate::error::Error;
 use std::str;
 
-fn check_end<A> (input: (&str, Vec<A>)) -> Result<Vec<A>, Error> {
+fn check_end<A> (input: (&str, A)) -> Result<A, Error> {
     match input {
-        ("\n", vec) => Ok(vec),
+        ("\n", parsed) => Ok(parsed),
         _ => Err(Error::ParseError("File not consumed completely"))
     }
 }
@@ -105,4 +106,37 @@ pub fn p3_1(input: String) -> Result<Vec<Vec<usize>>, Error> {
     .map_err(|_| Error::ParseError("Error occured while parsing"))
     .and_then(check_end)
     .and_then(check_length)
+}
+
+pub type Grid = Vec<Vec<usize>>;
+pub fn p4_1(input: String) -> Result<(Vec<usize>, Vec<Grid>), Error> {
+    pair(
+        separated_list1(
+            char(','),
+            map_res(
+                digit1::<&str, error::VerboseError<&str>>,
+                str::parse
+            )
+        ),
+        many1(
+            preceded(
+                count(line_ending, 2),
+                separated_list1(
+                    line_ending,
+                    preceded(
+                        many0(char(' ')),
+                        separated_list1(
+                            many1(char(' ')),
+                            map_res(
+                                digit1::<&str, error::VerboseError<&str>>,
+                                str::parse
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )(input.as_str())
+    .map_err(|_| Error::ParseError("Error occured while parsing"))
+    .and_then(check_end)
 }

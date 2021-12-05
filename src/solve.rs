@@ -170,3 +170,42 @@ pub fn p3_2(input: Vec<Vec<usize>>) -> usize {
 
     oxygen * co2
 }
+
+//--------------------------day4---------------------------
+use crate::parse::Grid;
+
+fn find_winning_grid(grids: Vec<Grid>, drawn: Vec<usize>) -> Option<Grid> {
+    let mut winning_grid = None;
+    for grid in grids {
+        for line in grid.clone() {
+            if line.iter().all(|num| drawn.contains(num)) {
+                winning_grid = Some(grid.clone());
+            }
+        }
+        for col in 0..grid[0].len() {
+            if grid.iter().all(|line| drawn.contains(&line[col])) {
+                winning_grid = Some(grid.clone());
+            }
+        }
+    };
+    winning_grid
+}
+
+pub fn p4_1(input: (Vec<usize>, Vec<Grid>)) -> usize {
+    let (drawn, grids) = input;
+    let mut used_numbers: Vec<usize> = Vec::new();
+    let mut winning_grid: Option<Grid> = None;
+    for last_draw in 0..drawn.len() {
+        if winning_grid == None {
+            used_numbers.push(drawn[last_draw]);
+            winning_grid = find_winning_grid(grids.clone(), used_numbers.clone());
+        }
+    }
+    assert!(winning_grid != None);
+    let sum_of_remaining = winning_grid.unwrap()
+        .concat()
+        .iter()
+        .filter(|num| !used_numbers.contains(num))
+        .sum::<usize>();
+    sum_of_remaining * used_numbers.pop().unwrap()
+}

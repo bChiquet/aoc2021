@@ -66,4 +66,13 @@ mod tests {
             .map(solve::p3_2);
         assert_eq!(oxygen_x_co2, Ok(23*10))
     }
+
+    #[test]
+    fn day4_ex1() {
+        let bingo_score = fs::read_to_string("examples/4-1")
+            .map_err(to_module_error)
+            .and_then(parse::p4_1)
+            .map(solve::p4_1);
+        assert_eq!(bingo_score, Ok(4512))
+    }
 }
