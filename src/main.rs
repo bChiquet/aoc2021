@@ -75,4 +75,13 @@ mod tests {
             .map(solve::p4_1);
         assert_eq!(bingo_score, Ok(4512))
     }
+
+    #[test]
+    fn day4_ex2() {
+        let bingo_worst_score = fs::read_to_string("examples/4-1")
+            .map_err(to_module_error)
+            .and_then(parse::p4_1)
+            .map(solve::p4_2);
+        assert_eq!(bingo_worst_score, Ok(1924))
+    }
 }

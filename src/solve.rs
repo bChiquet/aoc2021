@@ -174,35 +174,66 @@ pub fn p3_2(input: Vec<Vec<usize>>) -> usize {
 //--------------------------day4---------------------------
 use crate::parse::Grid;
 
-fn find_winning_grid(grids: Vec<Grid>, drawn: Vec<usize>) -> Option<Grid> {
-    let mut winning_grid = None;
+fn find_winning_grids(grids: Vec<Grid>, drawn: Vec<usize>) -> Vec<Grid> {
+    let mut winning_grids = Vec::new();
     for grid in grids {
+        let mut found_grid = false;
         for line in grid.clone() {
             if line.iter().all(|num| drawn.contains(num)) {
-                winning_grid = Some(grid.clone());
+                winning_grids.push(grid.clone());
+                found_grid = true;
             }
         }
-        for col in 0..grid[0].len() {
-            if grid.iter().all(|line| drawn.contains(&line[col])) {
-                winning_grid = Some(grid.clone());
+        if !found_grid {
+            for col in 0..grid[0].len() {
+                if grid.iter().all(|line| drawn.contains(&line[col])) {
+                    winning_grids.push(grid.clone());
+                }
             }
         }
     };
-    winning_grid
+    winning_grids
 }
 
 pub fn p4_1(input: (Vec<usize>, Vec<Grid>)) -> usize {
     let (drawn, grids) = input;
     let mut used_numbers: Vec<usize> = Vec::new();
-    let mut winning_grid: Option<Grid> = None;
+    let mut winning_grids: Vec<Grid> = Vec::new();
     for last_draw in 0..drawn.len() {
-        if winning_grid == None {
+        if winning_grids.len() == 0 {
             used_numbers.push(drawn[last_draw]);
-            winning_grid = find_winning_grid(grids.clone(), used_numbers.clone());
+            winning_grids = find_winning_grids(grids.clone(), used_numbers.clone());
         }
     }
-    assert!(winning_grid != None);
-    let sum_of_remaining = winning_grid.unwrap()
+    assert!(winning_grids.len() == 1);
+    let sum_of_remaining = winning_grids[0]
+        .concat()
+        .iter()
+        .filter(|num| !used_numbers.contains(num))
+        .sum::<usize>();
+    sum_of_remaining * used_numbers.pop().unwrap()
+}
+
+pub fn p4_2(input: (Vec<usize>, Vec<Grid>)) -> usize {
+    let (drawn, grids) = input;
+    let mut grids_not_won_yet: Vec<Grid> = grids;
+    let mut used_numbers: Vec<usize> = Vec::new();
+    let mut winning_grids: Vec<Grid> = Vec::new();
+    for last_draw in 0..drawn.len() {
+        if grids_not_won_yet.len() != 0 {
+            used_numbers.push(drawn[last_draw]);
+            let new_winners = find_winning_grids(
+                grids_not_won_yet.clone(),
+                used_numbers.clone());
+            grids_not_won_yet = grids_not_won_yet
+                .into_iter()
+                .filter(|grid| !new_winners.contains(grid))
+                .collect();
+            winning_grids.append(&mut new_winners.clone());
+        }
+    }
+    let sum_of_remaining = winning_grids.last()
+        .unwrap()
         .concat()
         .iter()
         .filter(|num| !used_numbers.contains(num))
