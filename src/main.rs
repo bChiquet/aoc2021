@@ -48,4 +48,13 @@ mod tests {
             .map(solve::p2_2);
         assert_eq!(final_pos_x_depth, Ok(15*60))
     }
+
+    #[test]
+    fn day3_ex1() {
+        let final_pos_x_depth = fs::read_to_string("examples/3-1")
+            .map_err(to_module_error)
+            .and_then(parse::p3_1)
+            .map(solve::p3_1);
+        assert_eq!(final_pos_x_depth, Ok(22*9))
+    }
 }

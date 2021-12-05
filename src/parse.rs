@@ -54,3 +54,28 @@ pub fn p2_1(input: String) -> Result<Vec<Command>, Error> {
     .map_err(|_| Error::ParseError("Error occured while parsing"))
     .and_then(check_end)
 }
+
+fn check_length<A>(input: Vec<Vec<A>>) -> Result<Vec<Vec<A>>, Error> {
+    let mut ins: Vec<usize> = input.iter().map(|v| v.len()).collect();
+    ins.dedup();
+    if ins.len() == 1 {Ok(input)}
+    else {Err(Error::ParseError("Input codes have different sizes"))}
+}
+
+pub fn p3_1(input: String) -> Result<Vec<Vec<usize>>, Error> {
+    multi::separated_list1(
+        character::complete::line_ending,
+        multi::many1(
+            combinator::map(
+                branch::alt(
+                    (character::complete::char::<&str, error::VerboseError<&str>>('0'),
+                    character::complete::char::<&str, error::VerboseError<&str>>('1'))
+                ),
+                |input| if input == '1' {1} else {0}
+            )
+        )
+    )(input.as_str())
+    .map_err(|_| Error::ParseError("Error occured while parsing"))
+    .and_then(check_end)
+    .and_then(check_length)
+}

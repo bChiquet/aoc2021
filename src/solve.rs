@@ -77,3 +77,33 @@ pub fn p2_2(vec: Vec<Command>) -> usize {
             });
     forward * down
 }
+
+//--------------------------day3---------------------------
+pub fn p3_1(input: Vec<Vec<usize>>) -> usize {
+    let mut sum_vec: Vec<(usize, usize)> = vec![(0, 0); input[0].len()];
+    for input_line in input {
+        for i in 0..input_line.len() {
+            if input_line[i] == 1 {
+                let (os, is)= sum_vec[i];
+                sum_vec[i] = (os, is+1);
+            } else {
+                let (os, is) = sum_vec[i];
+                sum_vec[i] = (os+1, is);
+            }
+        }
+    };
+    let mut gamma = 0;
+    let mut epsilon = 0;
+    for bit in sum_vec {
+        gamma = gamma << 1;
+        epsilon = epsilon << 1;
+        let (os, is) = bit;
+        if os > is {
+            epsilon +=1;
+        } else {
+            gamma +=1;
+        }
+    };
+    gamma * epsilon
+}
+
