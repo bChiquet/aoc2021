@@ -93,4 +93,13 @@ mod tests {
             .map(solve::p5_1);
         assert_eq!(nb_overlaps, Ok(5))
     }
+
+    #[test]
+    fn day5_ex2() {
+        let nb_overlaps = fs::read_to_string("examples/5-1")
+            .map_err(to_module_error)
+            .and_then(parse::p5_1)
+            .map(solve::p5_2);
+        assert_eq!(nb_overlaps, Ok(12))
+    }
 }

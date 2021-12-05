@@ -247,12 +247,29 @@ use crate::parse::{Line, Coord};
 fn to_points(line: Line) -> Vec<Coord> {
     use std::cmp::{min, max};
     let (start, end) = line;
+
     if start.x == end.x {
         let (min_y, max_y) = (min(start.y, end.y), max(start.y, end.y));
         (min_y..max_y+1).map(|y| Coord{x: start.x, y: y}).collect()
-    } else {
+
+    } else if start.y == end.y {
         let (min_x, max_x) = (min(start.x, end.x), max(start.x, end.x));
         (min_x..max_x+1).map(|x| Coord{x: x, y: start.y}).collect()
+
+    } else { //diagonal line
+        let xrange = if start.x < end.x {
+            (start.x..end.x+1).collect::<Vec<usize>>()
+        } else {
+           (end.x..start.x+1).rev().collect::<Vec<usize>>()
+        };
+        let yrange = if start.y < end.y {
+            (start.y..end.y+1).collect::<Vec<usize>>()
+        } else {
+            (end.y..start.y+1).rev().collect::<Vec<usize>>()
+        };
+        xrange.iter()
+            .zip(yrange.iter())
+            .map(|(x, y)| Coord {x: x.clone(), y: y.clone()}).collect()
     }
 }
 
@@ -260,6 +277,27 @@ pub fn p5_1(input: Vec<Line>) -> usize {
     use std::collections::HashMap;
     input.into_iter()
         .filter(|(start, end)| start.x == end.x || start.y == end.y)
+        .map(to_points)
+        .collect::<Vec<Vec<Coord>>>()
+        .concat()
+        .iter()
+        .fold(&mut HashMap::new(), |hmap: &mut HashMap<Coord, usize>, coord| {
+            let previous_count = hmap.get_mut(coord);
+            match previous_count { 
+                Some(count) => *count+=1, 
+                None => {hmap.insert(coord.clone(), 1); }
+            };
+            hmap
+        })
+        .values()
+        .map(|n| n.clone())
+        .filter(|n| n>&1)
+        .count()
+}
+
+pub fn p5_2(input: Vec<Line>) -> usize {
+    use std::collections::HashMap;
+    input.into_iter()
         .map(to_points)
         .collect::<Vec<Vec<Coord>>>()
         .concat()
