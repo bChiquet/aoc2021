@@ -84,4 +84,13 @@ mod tests {
             .map(solve::p4_2);
         assert_eq!(bingo_worst_score, Ok(1924))
     }
+
+    #[test]
+    fn day5_ex1() {
+        let nb_overlaps = fs::read_to_string("examples/5-1")
+            .map_err(to_module_error)
+            .and_then(parse::p5_1)
+            .map(solve::p5_1);
+        assert_eq!(nb_overlaps, Ok(5))
+    }
 }

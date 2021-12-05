@@ -140,3 +140,42 @@ pub fn p4_1(input: String) -> Result<(Vec<usize>, Vec<Grid>), Error> {
     .map_err(|_| Error::ParseError("Error occured while parsing"))
     .and_then(check_end)
 }
+
+pub type Line = (Coord, Coord);
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Coord {pub x: usize, pub y: usize}
+
+fn integer(input: &str) -> IResult<&str, usize> {
+    map_res(
+        digit1,
+        str::parse
+    )(input)
+}
+
+fn coord(input: &str) -> IResult<&str, Coord> {
+    map(
+        pair(
+            integer,
+            preceded(
+                char(','),
+                integer 
+            )
+        ),
+        |(x,y)| Coord {x:x, y:y}
+    )(input)
+}
+
+pub fn p5_1(input: String) -> Result<Vec<Line>, Error> {
+    separated_list1(
+        line_ending,
+        pair(
+            coord,
+            preceded(
+                tag(" -> "),
+                coord
+            )
+        )
+    )(input.as_str())
+    .map_err(|_| Error::ParseError("Error occured while parsing"))
+    .and_then(check_end)
+}
