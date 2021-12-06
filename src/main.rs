@@ -115,4 +115,13 @@ mod tests {
             parsed_input.map(|data| solve::p6_1(80, data)),
             Ok(5934))
     }
+
+    #[test]
+    fn day6_ex2() {
+        let fishcount = fs::read_to_string("examples/6-1")
+            .map_err(to_module_error)
+            .and_then(parse::p6_1)
+            .map(|data| solve::p6_2(256, data));
+        assert_eq!(fishcount, Ok(26984457539));
+    }
 }

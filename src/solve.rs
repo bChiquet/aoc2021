@@ -332,3 +332,19 @@ pub fn p6_1(days: usize, input: Vec<usize>) -> usize {
         p6_1(days-1, one_day_older)
     }
 }
+
+pub fn p6_2(days: usize, input: Vec<usize>) -> usize {
+    let mut fishbowl: Vec<usize> =
+        Vec::from([0,0,0,0,0,0,0,0,0,0]);
+    fn cycle (ptr: usize) -> usize { ptr.rem_euclid(9) }
+
+    input.iter()
+        .for_each(|&day| { fishbowl[day]+=1; });
+    for day in 0..days {
+        let mature_fish = fishbowl[cycle(day)];
+        fishbowl[cycle(day)] = 0;
+        fishbowl[cycle(day+7)] += mature_fish;
+        fishbowl[cycle(day+9)] += mature_fish;
+    };
+    fishbowl.iter().sum()
+}
