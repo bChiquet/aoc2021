@@ -102,4 +102,17 @@ mod tests {
             .map(solve::p5_2);
         assert_eq!(nb_overlaps, Ok(12))
     }
+
+    #[test]
+    fn day6_ex1() {
+        let parsed_input = fs::read_to_string("examples/6-1")
+            .map_err(to_module_error)
+            .and_then(parse::p6_1);
+        assert_eq!(
+            parsed_input.as_ref().map(|data| solve::p6_1(18, data.clone())),
+            Ok(26));
+        assert_eq!(
+            parsed_input.map(|data| solve::p6_1(80, data)),
+            Ok(5934))
+    }
 }

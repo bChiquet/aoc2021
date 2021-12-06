@@ -179,3 +179,12 @@ pub fn p5_1(input: String) -> Result<Vec<Line>, Error> {
     .map_err(|_| Error::ParseError("Error occured while parsing"))
     .and_then(check_end)
 }
+
+pub fn p6_1(input: String) -> Result<Vec<usize>, Error> {
+    separated_list1(
+        char(','),
+        integer
+    )(input.as_str())
+    .map_err(|_| Error::ParseError("Error occured while parsing"))
+    .and_then(check_end)
+}

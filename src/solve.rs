@@ -315,3 +315,20 @@ pub fn p5_2(input: Vec<Line>) -> usize {
         .filter(|n| n>&1)
         .count()
 }
+
+//--------------------------day6---------------------------
+
+pub fn p6_1(days: usize, input: Vec<usize>) -> usize {
+    if days < 1 {
+        input.iter().count()
+    } else {
+        let one_day_older = input.iter()
+            .map(|&age| if age == 0 {
+                    Vec::from([8, 6])
+                } else {Vec::from([age-1])
+                })
+            .collect::<Vec<Vec<usize>>>()
+            .concat();
+        p6_1(days-1, one_day_older)
+    }
+}
