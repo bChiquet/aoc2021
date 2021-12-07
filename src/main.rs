@@ -142,4 +142,16 @@ mod tests {
             .map(solve::p7_2);
         assert_eq!(fuel, Ok(168));
     }
+    #[test]
+    fn day7_ex2_test2() {
+        let brute_fuel = fs::read_to_string("data/7-1")
+            .map_err(to_module_error)
+            .and_then(parse::p6_1)
+            .map(solve::_p7_2_brute);
+        let fuel = fs::read_to_string("data/7-1")
+            .map_err(to_module_error)
+            .and_then(parse::p6_1)
+            .map(solve::p7_2);
+        assert_eq!(fuel, brute_fuel);
+    }
 }

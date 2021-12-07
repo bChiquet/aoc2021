@@ -349,7 +349,7 @@ pub fn p6_2(days: usize, input: Vec<usize>) -> usize {
     fishbowl.iter().sum()
 }
 
-pub fn p7_1(input: Vec<usize>) -> usize {
+pub fn _p7_1_brute(input: Vec<usize>) -> usize {
     let max_pos = *input.iter().max().unwrap();
     let min_pos = *input.iter().min().unwrap();
     let mut min_cost: usize = input.iter().sum();
@@ -362,7 +362,16 @@ pub fn p7_1(input: Vec<usize>) -> usize {
     min_cost
 }
 
-pub fn p7_2(input: Vec<usize>) -> usize {
+pub fn p7_1(input: Vec<usize>)-> usize {
+    let mut sorted = input;
+    sorted.sort();
+    let median = sorted[sorted.len()/2];
+    sorted.iter()
+        .map(|&pos| (pos as isize - median as isize).abs() as usize)
+        .sum()
+}
+
+pub fn _p7_2_brute(input: Vec<usize>) -> usize {
     let max_pos = *input.iter().max().unwrap();
     let min_pos = *input.iter().min().unwrap();
     let mut min_cost: usize = 0;
@@ -374,4 +383,26 @@ pub fn p7_2(input: Vec<usize>) -> usize {
         if fuel_cost < min_cost || min_cost == 0 {min_cost = fuel_cost};
     }
     min_cost
+}
+
+pub fn p7_2(input: Vec<usize>)-> usize {
+    use std::cmp::min;
+    let mean = input.iter()
+        .sum::<usize>() as f64 /input.len() as f64;
+
+    fn fuel_with_rounding(rounded: &dyn Fn(f64) -> f64
+                         , mean: f64
+                         , input: Vec<usize>)
+                        -> usize {
+        input.iter()
+            .map(|&pos| (pos as isize - rounded(mean) as isize).abs() as usize)
+            .map(|distance| (distance *(distance+1))/2)
+            .sum()
+    }
+
+    //Interestingly, floor, ceil or nearest integer rounding don't work in
+    //every situation (as shown by the test set). Therefore, we try both floor
+    //and ceil to find the correct solution.
+    min( fuel_with_rounding(&f64::ceil,  mean, input.clone())
+       , fuel_with_rounding(&f64::floor, mean, input))
 }
