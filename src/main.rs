@@ -133,4 +133,13 @@ mod tests {
             .map(solve::p7_1);
         assert_eq!(fuel, Ok(37));
     }
+
+    #[test]
+    fn day7_ex2() {
+        let fuel = fs::read_to_string("examples/7-1")
+            .map_err(to_module_error)
+            .and_then(parse::p6_1)
+            .map(solve::p7_2);
+        assert_eq!(fuel, Ok(168));
+    }
 }

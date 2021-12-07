@@ -361,3 +361,17 @@ pub fn p7_1(input: Vec<usize>) -> usize {
     }
     min_cost
 }
+
+pub fn p7_2(input: Vec<usize>) -> usize {
+    let max_pos = *input.iter().max().unwrap();
+    let min_pos = *input.iter().min().unwrap();
+    let mut min_cost: usize = 0;
+    for pos in min_pos..max_pos+1 {
+        let fuel_cost = input.iter()
+            .map(|&sub_pos| (pos as isize - sub_pos as isize).abs() as usize)
+            .map(|distance| (distance *(distance+1))/2)
+            .sum();
+        if fuel_cost < min_cost || min_cost == 0 {min_cost = fuel_cost};
+    }
+    min_cost
+}
