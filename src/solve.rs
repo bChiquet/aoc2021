@@ -348,3 +348,16 @@ pub fn p6_2(days: usize, input: Vec<usize>) -> usize {
     };
     fishbowl.iter().sum()
 }
+
+pub fn p7_1(input: Vec<usize>) -> usize {
+    let max_pos = *input.iter().max().unwrap();
+    let min_pos = *input.iter().min().unwrap();
+    let mut min_cost: usize = input.iter().sum();
+    for pos in min_pos..max_pos+1 {
+        let fuel_cost = input.iter()
+            .map(|&sub_pos| (pos as isize - sub_pos as isize).abs() as usize)
+            .sum();
+        if fuel_cost < min_cost {min_cost = fuel_cost};
+    }
+    min_cost
+}

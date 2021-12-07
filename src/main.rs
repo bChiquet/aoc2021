@@ -124,4 +124,13 @@ mod tests {
             .map(|data| solve::p6_2(256, data));
         assert_eq!(fishcount, Ok(26984457539));
     }
+
+    #[test]
+    fn day7_ex1() {
+        let fuel = fs::read_to_string("examples/7-1")
+            .map_err(to_module_error)
+            .and_then(parse::p6_1)
+            .map(solve::p7_1);
+        assert_eq!(fuel, Ok(37));
+    }
 }
