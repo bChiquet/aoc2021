@@ -154,4 +154,22 @@ mod tests {
             .map(solve::p7_2);
         assert_eq!(fuel, brute_fuel);
     }
+
+    #[test]
+    fn day8_ex1() {
+        let nb_special_digits = fs::read_to_string("examples/8-1")
+            .map_err(to_module_error)
+            .and_then(parse::p8_1)
+            .map(solve::p8_1);
+        assert_eq!(nb_special_digits, Ok(26));
+    }
+
+    #[test]
+    fn day8_ex2() {
+        let nb_special_digits = fs::read_to_string("examples/8-1")
+            .map_err(to_module_error)
+            .and_then(parse::p8_2)
+            .map(solve::p8_2);
+        assert_eq!(nb_special_digits, Ok(61229));
+    }
 }

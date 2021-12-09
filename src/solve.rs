@@ -406,3 +406,72 @@ pub fn p7_2(input: Vec<usize>)-> usize {
     min( fuel_with_rounding(&f64::ceil,  mean, input.clone())
        , fuel_with_rounding(&f64::floor, mean, input))
 }
+
+pub fn p8_1(input: Vec<Vec<String>>)-> usize {
+    input.concat().iter()
+        .map(|str| str.len())
+        .filter(|str_len| [2,3,4,7].contains(str_len))
+        .count()
+}
+
+pub fn solve_one(input: &(Vec <String>, Vec<String>)) -> usize {
+    let (defs, number) = input;
+    let one = defs.iter()
+        .filter(|str| str.len() == 2)
+        .collect::<Vec<&String>>()[0];
+    let seven = defs.iter()
+        .filter(|str| str.len() == 3)
+        .collect::<Vec<&String>>()[0];
+    let four = defs.iter()
+        .filter(|str| str.len() == 4)
+        .collect::<Vec<&String>>()[0];
+    let eight = defs.iter()
+        .filter(|str| str.len() == 7)
+        .collect::<Vec<&String>>()[0];
+    let nine = defs.iter()
+        .filter(|str| str.len() == 6)
+        .filter (|str| four.chars().all(|chr| str.contains(chr)))
+        .collect::<Vec<&String>>()[0];
+    let zero = defs.iter()
+        .filter(|str| str.len() == 6)
+        .filter (|&str| str != nine)
+        .filter (|str| one.chars().all(|chr| str.contains(chr)))
+        .collect::<Vec<&String>>()[0];
+    let six = defs.iter()
+        .filter(|str| str.len() == 6)
+        .filter (|&str| str != nine && str != zero)
+        .collect::<Vec<&String>>()[0];
+    let three = defs.iter()
+        .filter(|str| str.len() == 5)
+        .filter (|&str| one.chars().all(|chr| str.contains(chr)))
+        .collect::<Vec<&String>>()[0];
+    let five = defs.iter()
+        .filter(|str| str.len() == 5)
+        .filter (|&str| four.chars()
+                            .filter(|&chr| !one.contains(chr))
+                            .all(|chr| str.contains(chr)))
+        .collect::<Vec<&String>>()[0];
+    let two = defs.iter()
+        .filter(|str| str.len() == 5)
+        .filter (|&str| str != three && str != five)
+        .collect::<Vec<&String>>()[0];
+    
+    number.iter()
+        .map(|digit| match digit {
+            i if i == zero => 0,
+            i if i == one => 1,
+            i if i == two => 2,
+            i if i == three => 3,
+            i if i == four => 4,
+            i if i == five => 5,
+            i if i == six => 6,
+            i if i == seven => 7,
+            i if i == eight => 8,
+            i if i == nine => 9,
+            _ => 0
+        }).fold(0, |acc, digit| acc*10 + digit)
+}
+
+pub fn p8_2(input: Vec<(Vec <String>, Vec<String>)>) -> usize {
+    input.iter().map(solve_one).sum()
+}

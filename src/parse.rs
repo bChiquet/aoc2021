@@ -14,7 +14,8 @@ use nom::{
     character::complete::{
         line_ending,
         char,
-        digit1
+        digit1,
+        one_of
     },
     combinator::{
         map_res,
@@ -184,6 +185,47 @@ pub fn p6_1(input: String) -> Result<Vec<usize>, Error> {
     separated_list1(
         char(','),
         integer
+    )(input.as_str())
+    .map_err(|_| Error::ParseError("Error occured while parsing"))
+    .and_then(check_end)
+}
+
+fn digit_word_list(input: &str) -> IResult<&str, Vec<String>> {
+    use itertools::Itertools;
+    separated_list1(
+        char(' '),
+        map(
+            many1(one_of("abcdefg")),
+            |chars| chars.into_iter().sorted().collect()
+        )
+    )(input)
+}
+
+pub fn p8_1(input: String) -> Result<Vec<Vec<String>>, Error> {
+    separated_list1(
+        line_ending,
+        preceded(
+            digit_word_list,
+            preceded(
+                tag(" | "),
+                digit_word_list
+            ) 
+        )
+    )(input.as_str())
+    .map_err(|_| Error::ParseError("Error occured while parsing"))
+    .and_then(check_end)
+}
+
+pub fn p8_2(input: String) -> Result<Vec<(Vec<String>,Vec<String>)>, Error> {
+    separated_list1(
+        line_ending,
+        pair(
+            digit_word_list,
+            preceded(
+                tag(" | "),
+                digit_word_list
+            ) 
+        )
     )(input.as_str())
     .map_err(|_| Error::ParseError("Error occured while parsing"))
     .and_then(check_end)
