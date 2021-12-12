@@ -200,4 +200,13 @@ mod tests {
             .map(solve::p10_1);
         assert_eq!(low_point_risk_level, Ok(26397));
     }
+
+    #[test]
+    fn day10_ex2() {
+        let low_point_risk_level = fs::read_to_string("examples/10-1")
+            .map_err(to_module_error)
+            .and_then(parse::p10_1)
+            .map(solve::p10_2);
+        assert_eq!(low_point_risk_level, Ok(288957));
+    }
 }

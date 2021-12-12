@@ -557,7 +557,7 @@ pub fn p9_2(input: Vec<Vec<usize>>) -> usize {
 use crate::parse::Delimiter;
 use crate::parse::DelimiterType;
 
-fn scoring (d_type: &DelimiterType) -> usize {
+fn error_scoring (d_type: &DelimiterType) -> usize {
     match d_type {
         DelimiterType::Parens => 3,
         DelimiterType::Bracket => 57,
@@ -566,28 +566,63 @@ fn scoring (d_type: &DelimiterType) -> usize {
     }
 }
 
+fn autocomplete_scoring (unclosed_scopes: Vec<&DelimiterType>) -> usize {
+    unclosed_scopes.iter()
+        .rev()
+        .fold(0, |score, delimiter| {
+            let pts = match delimiter {
+                DelimiterType::Parens => 1,
+                DelimiterType::Bracket => 2,
+                DelimiterType::Brace => 3,
+                DelimiterType::Angle => 4
+            };
+            score * 5 + pts
+        })
+}
+
+pub struct ParsingResult<'a> {
+    active_scopes: Vec<&'a DelimiterType>,
+    first_faulty: Option<&'a DelimiterType>,
+}
+
+fn parse(input: &Vec<Delimiter>) -> ParsingResult {
+    let mut active_scopes: Vec<&DelimiterType> = Vec::new();
+    let mut first_faulty: Option<&DelimiterType> = None;
+    for delimiter in input {
+        match delimiter {
+            Delimiter::Open(d_type) =>
+                active_scopes.push(d_type),
+            Delimiter::Close(d_type) => {
+                let last_opened = active_scopes.pop();
+                if last_opened != Some(d_type) {
+                    first_faulty = Some(d_type);
+                    break;
+                };
+            }
+        }
+    };
+    ParsingResult {
+        active_scopes: active_scopes,
+        first_faulty: first_faulty
+    }
+}
+
 pub fn p10_1(input: Vec<Vec<Delimiter>>) -> usize {
     input.iter()
-        .map(|line| {
-            let mut active_scopes: Vec<&DelimiterType> = Vec::new();
-            let mut first_faulty: Option<&DelimiterType> = None;
-            for delimiter in line {
-                match delimiter {
-                    Delimiter::Open(d_type) =>
-                        active_scopes.push(d_type),
-                    Delimiter::Close(d_type) => {
-                        let last_opened = active_scopes.pop();
-                        if last_opened != Some(d_type) {
-                            first_faulty = Some(d_type);
-                            break;
-                        };
-                    }
-                }
-            };
-            first_faulty
-        })
+        .map(|line| parse(line).first_faulty)
         .filter(|&opt| opt != None)
         .map(|opt| opt.unwrap())
-        .map(scoring)
+        .map(error_scoring)
         .sum()
+}
+
+pub fn p10_2(input: Vec<Vec<Delimiter>>) -> usize {
+    use itertools::Itertools;
+    let sorted_scores = input.iter()
+        .map(|line| parse(line))
+        .filter(|result| result.first_faulty == None)
+        .map(|result| autocomplete_scoring(result.active_scopes))
+        .sorted()
+        .collect::<Vec<usize>>();
+    sorted_scores[sorted_scores.len()/2]
 }
