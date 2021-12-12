@@ -182,4 +182,13 @@ mod tests {
             .map(solve::p9_1);
         assert_eq!(low_point_risk_level, Ok(15));
     }
+
+    #[test]
+    fn day9_ex2() {
+        let low_point_risk_level = fs::read_to_string("examples/9-1")
+            .map_err(to_module_error)
+            .and_then(parse::p9_1)
+            .map(solve::p9_2);
+        assert_eq!(low_point_risk_level, Ok(1134));
+    }
 }

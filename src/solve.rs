@@ -495,3 +495,60 @@ pub fn p9_1(input: Vec<Vec<usize>>) -> usize {
     };
     risk_level
 }
+
+fn find_lowest_points(input: &Vec<Vec<usize>>) -> Vec<Coord> {
+    let mut lowest_points = Vec::new();
+    for x in 0..input.len() {
+        for y in 0..input[x].len() {
+            let coord = Coord {x:x, y:y};
+            let is_lowest = neighbours(input, &coord)
+                .iter()
+                .map(|coord| input[coord.x][coord.y])
+                .all(|height| height > input[x][y]);
+            if is_lowest { lowest_points.push(coord) }
+        }
+    };
+    lowest_points
+}
+
+fn neighbours(input: &Vec<Vec<usize>>, point: &Coord) -> Vec<Coord> {
+    let mut neighbours = Vec::new();
+    if point.x > 0
+        { neighbours.push(Coord { x:point.x-1, y:point.y }) }
+    if point.x < input.len()-1
+        { neighbours.push(Coord { x:point.x+1, y:point.y }) }
+    if point.y > 0
+        { neighbours.push(Coord { x:point.x, y:point.y-1 }) }
+    if point.y < input[point.x].len()-1
+        { neighbours.push(Coord { x:point.x, y:point.y+1 }) }
+    neighbours
+}
+
+pub fn p9_2(input: Vec<Vec<usize>>) -> usize {
+    let lowest_points = find_lowest_points(&input);
+    let mut basin_sizes = Vec::new();
+   
+    for point in lowest_points {
+        let mut basin_size = 0;
+        let mut seen = Vec::from([point]);
+        let mut visited: Vec<Coord> = Vec::new();
+        while seen.len() > 0 {
+            let cur = seen.pop().unwrap();
+            visited.push(cur.clone());
+            if input[cur.x][cur.y] < 9 {
+                basin_size += 1;
+                let unvisited_neighbours = neighbours(&input, &cur)
+                    .into_iter()
+                    .filter(|neighbour| !visited.contains(neighbour))
+                    .filter(|neighbour| !seen.contains(neighbour))
+                    .collect::<Vec<Coord>>();
+                seen.append(&mut unvisited_neighbours.clone())
+            }
+        }
+        basin_sizes.push(basin_size);
+    }
+    basin_sizes.sort();
+    basin_sizes.reverse();
+    basin_sizes[..3].iter()
+        .fold(1, |acc, size| acc*size)
+}
