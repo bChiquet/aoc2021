@@ -142,6 +142,7 @@ mod tests {
             .map(solve::p7_2);
         assert_eq!(fuel, Ok(168));
     }
+
     #[test]
     fn day7_ex2_test2() {
         let brute_fuel = fs::read_to_string("data/7-1")
@@ -171,5 +172,14 @@ mod tests {
             .and_then(parse::p8_2)
             .map(solve::p8_2);
         assert_eq!(nb_special_digits, Ok(61229));
+    }
+
+    #[test]
+    fn day9_ex1() {
+        let low_point_risk_level = fs::read_to_string("examples/9-1")
+            .map_err(to_module_error)
+            .and_then(parse::p9_1)
+            .map(solve::p9_1);
+        assert_eq!(low_point_risk_level, Ok(15));
     }
 }

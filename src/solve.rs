@@ -475,3 +475,23 @@ pub fn solve_one(input: &(Vec <String>, Vec<String>)) -> usize {
 pub fn p8_2(input: Vec<(Vec <String>, Vec<String>)>) -> usize {
     input.iter().map(solve_one).sum()
 }
+
+pub fn p9_1(input: Vec<Vec<usize>>) -> usize {
+    let mut risk_level = 0;
+    for x in 0..input.len() {
+        for y in 0..input[x].len() {
+            let mut lowest = true;
+            if x > 0
+                { lowest = lowest && input[x-1][y] > input[x][y] }
+            if x < input.len()-1
+                { lowest = lowest && input[x+1][y] > input[x][y] }
+            if y > 0
+                { lowest = lowest && input[x][y-1] > input[x][y] }
+            if y < input[x].len()-1
+                { lowest = lowest && input[x][y+1] > input[x][y] }
+            if lowest
+                { risk_level += input[x][y]+1 }
+        }
+    };
+    risk_level
+}

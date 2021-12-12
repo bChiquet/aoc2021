@@ -230,3 +230,17 @@ pub fn p8_2(input: String) -> Result<Vec<(Vec<String>,Vec<String>)>, Error> {
     .map_err(|_| Error::ParseError("Error occured while parsing"))
     .and_then(check_end)
 }
+
+pub fn p9_1(input: String)-> Result<Vec<Vec<usize>>, Error> { 
+    separated_list1(
+        line_ending,
+        map_res(
+            digit1::<&str, error::VerboseError<&str>>,
+            |digits| digits.chars()
+                .map(|char| str::parse(char.encode_utf8(&mut [0;1])))
+                .collect()
+        )
+    )(input.as_str())
+    .map_err(|_| Error::ParseError("Error occured while parsing"))
+    .and_then(check_end)
+}
