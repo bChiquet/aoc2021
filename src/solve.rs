@@ -552,3 +552,42 @@ pub fn p9_2(input: Vec<Vec<usize>>) -> usize {
     basin_sizes[..3].iter()
         .fold(1, |acc, size| acc*size)
 }
+
+//--------------------------day10--------------------------
+use crate::parse::Delimiter;
+use crate::parse::DelimiterType;
+
+fn scoring (d_type: &DelimiterType) -> usize {
+    match d_type {
+        DelimiterType::Parens => 3,
+        DelimiterType::Bracket => 57,
+        DelimiterType::Brace => 1197,
+        DelimiterType::Angle => 25137
+    }
+}
+
+pub fn p10_1(input: Vec<Vec<Delimiter>>) -> usize {
+    input.iter()
+        .map(|line| {
+            let mut active_scopes: Vec<&DelimiterType> = Vec::new();
+            let mut first_faulty: Option<&DelimiterType> = None;
+            for delimiter in line {
+                match delimiter {
+                    Delimiter::Open(d_type) =>
+                        active_scopes.push(d_type),
+                    Delimiter::Close(d_type) => {
+                        let last_opened = active_scopes.pop();
+                        if last_opened != Some(d_type) {
+                            first_faulty = Some(d_type);
+                            break;
+                        };
+                    }
+                }
+            };
+            first_faulty
+        })
+        .filter(|&opt| opt != None)
+        .map(|opt| opt.unwrap())
+        .map(scoring)
+        .sum()
+}

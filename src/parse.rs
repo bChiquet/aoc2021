@@ -244,3 +244,47 @@ pub fn p9_1(input: String)-> Result<Vec<Vec<usize>>, Error> {
     .map_err(|_| Error::ParseError("Error occured while parsing"))
     .and_then(check_end)
 }
+
+#[derive(Debug)]
+pub enum Delimiter {
+   Open(DelimiterType),
+   Close(DelimiterType)
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum DelimiterType {
+    Parens,
+    Brace,
+    Bracket,
+    Angle
+}
+
+fn delimiter(input: &str) -> IResult<&str, Delimiter> {
+    use Delimiter::*;
+    use DelimiterType::*;
+    map_res(
+        one_of("<{[()]}>"),
+        |char| match char {
+            '<' => Ok(Open(Angle)),
+            '{' => Ok(Open(Brace)),
+            '[' => Ok(Open(Bracket)),
+            '(' => Ok(Open(Parens)),
+            ')' => Ok(Close(Parens)),
+            ']' => Ok(Close(Bracket)),
+            '}' => Ok(Close(Brace)),
+            '>' => Ok(Close(Angle)),
+            _   => Err("unexpected delimiter found")
+        }
+    )(input)
+}
+
+pub fn p10_1(input: String) -> Result<Vec<Vec<Delimiter>>, Error> {
+    separated_list1(
+        line_ending,
+        many1(
+            delimiter
+        )
+    )(input.as_str())
+    .map_err(|_| Error::ParseError("Error occured while parsing"))
+    .and_then(check_end)
+}
