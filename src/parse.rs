@@ -143,7 +143,7 @@ pub fn p4_1(input: String) -> Result<(Vec<usize>, Vec<Grid>), Error> {
 }
 
 pub type Line = (Coord, Coord);
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Coord {pub x: usize, pub y: usize}
 
 fn integer(input: &str) -> IResult<&str, usize> {

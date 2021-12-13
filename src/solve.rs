@@ -626,3 +626,102 @@ pub fn p10_2(input: Vec<Vec<Delimiter>>) -> usize {
         .collect::<Vec<usize>>();
     sorted_scores[sorted_scores.len()/2]
 }
+
+//--------------------------day11--------------------------
+fn neighbours_8(octopi: &Vec<Vec<usize>>, point: Coord) -> Vec<Coord> {
+    use std::cmp::{min, max};
+    let mut neighbours = Vec::new();
+    for x in max(0, point.x as isize-1) as usize 
+           ..min(octopi.len(), point.x+2) {
+        for y in max(0, point.y as isize-1) as usize
+               ..min(octopi[x].len(), point.y+2) {
+            neighbours.push( Coord {x:x, y:y})
+        }
+    }
+    neighbours
+}
+
+fn powerup_all(
+    octopi: &mut Vec<Vec<usize>>,
+    will_flash: &mut Vec<Coord>
+    ) -> () {
+    for x in 0..octopi.len() {
+        for y in 0..octopi[x].len() {
+            octopi[x][y]+=1;
+            if octopi[x][y] > 9 {
+                will_flash.push( Coord {x:x, y:y}) 
+            }
+        }
+    }
+}
+
+fn flash(
+    octopi: &mut Vec<Vec<usize>>,
+    flashing_octopus: Coord,
+    will_flash: &mut Vec<Coord>,
+    flashed: &mut Vec<Coord>
+    ) -> () {
+    neighbours_8(&octopi, flashing_octopus).iter()
+        .for_each(|neighbour| {
+            octopi[neighbour.x][neighbour.y] +=1;
+            if octopi[neighbour.x][neighbour.y] > 9 &&
+               !will_flash.contains(neighbour) &&
+               !flashed.contains(neighbour) {
+                will_flash.push(neighbour.clone()) 
+            }
+        })
+}
+
+fn zero(
+    octopi: &mut Vec<Vec<usize>>,
+    flashed: &Vec<Coord>
+    ) -> () {
+    flashed.iter()
+        .for_each(|octopus| {
+            octopi[octopus.x][octopus.y] = 0
+        })
+}
+
+fn turn(octopi: &mut Vec<Vec<usize>>) {
+    let mut will_flash: Vec<Coord> = Vec::new();
+    let mut flashed: Vec<Coord> = Vec::new();
+    powerup_all(octopi, &mut will_flash);
+    while will_flash.len() > 0 {
+        let flashing_octopus = will_flash.pop().unwrap();
+        flashed.push(flashing_octopus.clone());
+        flash( octopi
+             , flashing_octopus
+             , &mut will_flash
+             , &mut flashed)
+    };
+    zero(octopi, &flashed);
+}
+
+fn count_flashes(octopi: &Vec<Vec<usize>>) -> usize {
+    octopi.concat().iter().fold(0, |acc, &last| if last == 0 {acc+1} else {acc})
+}
+
+pub fn p11_1(input: Vec<Vec<usize>>, nb_turns: usize) -> usize {
+    let mut octopi = input.clone();
+    let mut flash_count = 0;
+    for _turn in 0..nb_turns {
+        turn(&mut octopi);
+        flash_count += count_flashes(&octopi);
+    }
+    flash_count
+}
+
+fn converged(octopi: &Vec<Vec<usize>>) -> bool {
+    let first = octopi[0][0];
+    octopi.concat().iter().fold(true, |acc, &last| acc && last == first)
+}
+
+pub fn p11_2(input: Vec<Vec<usize>>) -> usize {
+    let mut octopi = input.clone();
+    let mut nb_turns = 0;
+    while !converged(&octopi) {
+        nb_turns += 1;
+        turn(&mut octopi);
+    }
+    nb_turns
+}

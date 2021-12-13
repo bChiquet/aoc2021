@@ -209,4 +209,31 @@ mod tests {
             .map(solve::p10_2);
         assert_eq!(low_point_risk_level, Ok(288957));
     }
+
+    #[test]
+    fn day11_ex1_1() {
+        let nb_flashes = fs::read_to_string("examples/11-1")
+            .map_err(to_module_error)
+            .and_then(parse::p9_1)
+            .map(|input| solve::p11_1(input, 10));
+        assert_eq!(nb_flashes, Ok(204));
+    }
+
+    #[test]
+    fn day11_ex1_2() {
+        let nb_flashes = fs::read_to_string("examples/11-1")
+            .map_err(to_module_error)
+            .and_then(parse::p9_1)
+            .map(|input| solve::p11_1(input, 100));
+        assert_eq!(nb_flashes, Ok(1656));
+    }
+
+    #[test]
+    fn day11_ex2() {
+        let nb_flashes = fs::read_to_string("examples/11-1")
+            .map_err(to_module_error)
+            .and_then(parse::p9_1)
+            .map(|input| solve::p11_2(input));
+        assert_eq!(nb_flashes, Ok(195));
+    }
 }
